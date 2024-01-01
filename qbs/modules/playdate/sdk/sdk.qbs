@@ -201,17 +201,22 @@ Module {
 
 				var pdx = product.Playdate.metadata
 
-				var inFile = new TextFile(input.filePath)
-				var props = inFile.readAll().split('\n').reduce(function (acc, line) {
-					if (line.length !== 0) {
-						var prop = line.split('=')
-						var propKey = prop[0], propValue = prop[1]
-						console.debug('[playdate.pdxinfo] Read ' + propKey + ' = ' + propValue)
-						acc[propKey] = propValue
-					}
-					return acc
-				}, {})
-				inFile.close()
+				try {
+					var inFile = new TextFile(input.filePath)
+					var props = inFile.readAll().split('\n').reduce(function (acc, line) {
+						if (line.length !== 0) {
+							var prop = line.split('=')
+							var propKey = prop[0], propValue = prop[1]
+							console.debug('[playdate.pdxinfo] Read ' + propKey + ' = ' + propValue)
+							acc[propKey] = propValue
+						}
+						return acc
+					}, {})
+				} catch (e) {
+					var props = {}
+				} finally {
+					if (inFile) inFile.close()
+				}
 
 				var updateString = $.partial(maybeUpdate, props, $.isUndefined)
 				var updateInt = $.partial(maybeUpdate, props, $.isMinusOne)

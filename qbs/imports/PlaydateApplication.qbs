@@ -9,6 +9,12 @@ Application {
 
 	bundle.isBundle: false
 
+	Group {
+		name: 'Source'
+		prefix: product.Playdate.sdk.sourceDir + '/'
+		files: ['**']
+	}
+
 	PlaydateBundle {
 		qbs.install: true
 		qbs.installSourceBase: product.buildDirectory
