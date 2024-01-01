@@ -3,7 +3,7 @@ import qbs.FileInfo
 Application {
 	Depends { name: 'bundle' }
 	Depends { name: 'Playdate.sdk' }
-	Depends { name: 'Playdate.pdxinfo' }
+	Depends { name: 'Playdate.metadata' }
 
 	type: ['playdate.bundle.content', 'playdate.bundle.pdxinfo']
 

@@ -184,7 +184,7 @@ Module {
 					}
 				}
 
-				var pdx = product.Playdate.pdxinfo
+				var pdx = product.Playdate.metadata
 
 				var inFile = new TextFile(input.filePath)
 				var props = inFile.readAll().split('\n').reduce(function (acc, line) {
