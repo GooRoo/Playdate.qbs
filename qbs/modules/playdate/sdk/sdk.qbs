@@ -9,10 +9,25 @@ import 'polyfill.js' as $
 
 Module {
 	property pathList paths: []
-	property path pdcPath: pdcProbe.filePath
-	property string targetName: product.targetName + '.pdx'
-	readonly property path targetDir: FileInfo.joinPaths(product.buildDirectory, targetName)
+	PropertyOptions {
+		name: 'paths'
+		description: 'A list of paths to search for a Playdate SDK.'
+	}
+
+	readonly property path pdcPath: pdcProbe.filePath
+	PropertyOptions {
+		name: 'paths'
+		description: 'A path to the `pdc` (Playdate Compiler) executable from SDK.'
+	}
+
 	property string sourceDirectory: 'source'
+	PropertyOptions {
+		name: 'sourceDirectory'
+		description: 'A directory where all the application/game source is located.'
+	}
+
+	readonly property string _targetName: product.targetName + '.pdx'
+	readonly property path targetDir: FileInfo.joinPaths(product.buildDirectory, _targetName)
 	readonly property path sourceDir: FileInfo.joinPaths(product.sourceDirectory, sourceDirectory)
 
 	additionalProductTypes: ['playdate.bundle.content', 'playdate.bundle.pdxinfo']
