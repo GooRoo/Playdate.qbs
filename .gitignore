@@ -1,0 +1,6 @@
+build/*
+debug/*
+default/*
+release/*
+
+.DS_Store
