@@ -8,30 +8,19 @@ import 'pd.js' as PD
 import 'polyfill.js' as $
 
 Module {
-	property pathList sdkPaths: []
+	property pathList paths: []
 	property path pdcPath: pdcProbe.filePath
 	property string targetName: product.targetName + '.pdx'
 	readonly property path targetDir: FileInfo.joinPaths(product.buildDirectory, targetName)
 	property string sourceDirectory: 'source'
 	readonly property path sourceDir: FileInfo.joinPaths(product.sourceDirectory, sourceDirectory)
 
-	property string bundleName: product.name
-	property string author
-	property string description
-	property string bundleId
-	property string version: product.version
-	property int buildNumber: -1
-	property path imagePath
-	property path launchSoundPath
-	property string contentWarning
-	property string contentWarning2
-
 	additionalProductTypes: ['playdate.bundle.content', 'playdate.bundle.pdxinfo']
 
 	Probes.BinaryProbe {
 		id: pdcProbe
 		names: 'pdc'
-		searchPaths: product.playdate.sdkPaths
+		searchPaths: product.Playdate.sdk.paths
 		environmentPaths: ['PLAYDATE_SDK_PATH']
 	}
 
@@ -129,12 +118,12 @@ Module {
 				}
 			}
 
-			var pdcPath = product.playdate.pdcPath
+			var pdcPath = product.Playdate.sdk.pdcPath
 
 			var pdc = new Command(pdcPath, [
 				'--verbose',
-				product.playdate.sourceDir,
-				product.playdate.targetDir,
+				product.Playdate.sdk.sourceDir,
+				product.Playdate.sdk.targetDir,
 			])
 			pdc.silent = true
 			pdc.highlight = 'compiler'
@@ -146,8 +135,8 @@ Module {
 			movePdxInfo.silent = true
 			movePdxInfo.sourceCode = function () {
 				File.move(
-					FileInfo.joinPaths(product.playdate.targetDir, 'pdxinfo'),
-					FileInfo.joinPaths(product.playdate.targetDir, '..', 'pdc.pdxinfo')
+					FileInfo.joinPaths(product.Playdate.sdk.targetDir, 'pdxinfo'),
+					FileInfo.joinPaths(product.Playdate.sdk.targetDir, '..', 'pdc.pdxinfo')
 				)
 			}
 			cmds.push(movePdxInfo)
@@ -155,7 +144,7 @@ Module {
 			var listResults = new JavaScriptCommand()
 			listResults.silent = true
 			listResults.sourceCode = function () {
-				var files = PD.listFiles(product.playdate.targetDir, true)
+				var files = PD.listFiles(product.Playdate.sdk.targetDir, true)
 				if (files.length > 0) {
 					var compilationResults = new TextFile(outputs['playdate.pdc-result'][0].filePath, TextFile.WriteOnly)
 					compilationResults.write(files.join('\n'))
@@ -180,7 +169,7 @@ Module {
 		inputs: ['playdate.pdxinfo-gen']
 
 		Artifact {
-			filePath: FileInfo.joinPaths(product.playdate.targetDir, 'pdxinfo')
+			filePath: FileInfo.joinPaths(product.Playdate.sdk.targetDir, 'pdxinfo')
 			fileTags: ['playdate.bundle.pdxinfo']
 		}
 
@@ -195,7 +184,7 @@ Module {
 					}
 				}
 
-				var pd = product.playdate
+				var pdx = product.Playdate.pdxinfo
 
 				var inFile = new TextFile(input.filePath)
 				var props = inFile.readAll().split('\n').reduce(function (acc, line) {
@@ -212,20 +201,20 @@ Module {
 				var updateString = $.partial(maybeUpdate, props, $.isUndefined)
 				var updateInt = $.partial(maybeUpdate, props, $.isMinusOne)
 				var updatePath = function (key, path) {
-					var relPath = !path || path === ''? undefined : FileInfo.relativePath(pd.sourceDir, path)
+					var relPath = !path || path === ''? undefined : FileInfo.relativePath(product.Playdate.sdk.sourceDir, path)
 					maybeUpdate(props, $.isUndefined, key, relPath)
 				}
 
-				updateString('name', pd.bundleName)
-				updateString('author', pd.author)
-				updateString('description', pd.description)
-				updateString('bundleID', pd.bundleId)
-				updateString('version', pd.version)
-				updateInt('buildNumber', pd.buildNumber)
-				updatePath('imagePath', pd.imagePath)
-				updatePath('launchSoundPath', pd.launchSoundPath)
-				updateString('contentWarning', pd.contentWarning)
-				updateString('contentWarning2', pd.contentWarning2)
+				updateString('name', pdx.bundleName)
+				updateString('author', pdx.author)
+				updateString('description', pdx.description)
+				updateString('bundleID', pdx.bundleId)
+				updateString('version', pdx.version)
+				updateInt('buildNumber', pdx.buildNumber)
+				updatePath('imagePath', pdx.imagePath)
+				updatePath('launchSoundPath', pdx.launchSoundPath)
+				updateString('contentWarning', pdx.contentWarning)
+				updateString('contentWarning2', pdx.contentWarning2)
 
 				var outFile = new TextFile(output.filePath, TextFile.WriteOnly)
 				for (var propKey in props) {
@@ -244,9 +233,6 @@ Module {
 
 		outputArtifacts: {
 			function filenameToTags(f) {
-				if (FileInfo.fileName(f) === 'pdxinfo')
-					return ['playdate.pdxinfo.interim']
-
 				var tags = ['playdate.bundle.content']
 				var knownExtensions = ['pda', 'pdi', 'pds', 'pdt', 'pdv', 'pdz', 'pft']
 				var suffix = FileInfo.suffix(f)
@@ -282,7 +268,7 @@ Module {
 			var cmds = []
 
 			var pdcOutput = inputs['playdate.pdc-output'][0].filePath
-			var sourceDir = product.playdate.sourceDir
+			var sourceDir = product.Playdate.sdk.sourceDir
 
 			var listActions = new JavaScriptCommand()
 			listActions.description = 'compiling ' + PD.processPdcOutput(pdcOutput, sourceDir).join(' [' + product.name + ']\n')
