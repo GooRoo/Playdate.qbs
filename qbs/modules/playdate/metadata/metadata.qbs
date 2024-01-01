@@ -1,3 +1,5 @@
+import qbs.FileInfo
+
 Module {
 	property string bundleName: product.name
 	PropertyOptions {
@@ -40,7 +42,7 @@ Module {
 			'to set the value by hand.'
 	}
 
-	property path imagePath
+	property string imagePath
 	PropertyOptions {
 		name: 'imagePath'
 		description:
@@ -48,13 +50,19 @@ Module {
 			'The path is relative to `Playdate.sdk.sourceDirectory`.'
 	}
 
-	property path launchSoundPath
+	readonly property path absoluteImagePath:
+		imagePath? FileInfo.joinPaths(product.Playdate.sdk.sourceDir, imagePath) : undefined
+
+	property string launchSoundPath
 	PropertyOptions {
 		name: 'launchSoundPath'
 		description:
 			'(Optional.) Should point to the path of a short audio file to be played as the application launch ' +
 			'animation is taking place. The path is relative to `Playdate.sdk.sourceDirectory`.'
 	}
+
+	readonly property path absoluteLaunchSoundPath:
+		launchSoundPath? FileInfo.joinPaths(product.Playdate.sdk.sourceDir, launchSoundPath) : undefined
 
 	property string contentWarning
 	PropertyOptions {

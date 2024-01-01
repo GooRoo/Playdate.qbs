@@ -211,8 +211,8 @@ Module {
 				updateString('bundleID', pdx.bundleId)
 				updateString('version', pdx.version)
 				updateInt('buildNumber', pdx.buildNumber)
-				updatePath('imagePath', pdx.imagePath)
-				updatePath('launchSoundPath', pdx.launchSoundPath)
+				updatePath('imagePath', pdx.absoluteImagePath)
+				updatePath('launchSoundPath', pdx.absoluteLaunchSoundPath)
 				updateString('contentWarning', pdx.contentWarning)
 				updateString('contentWarning2', pdx.contentWarning2)
 
