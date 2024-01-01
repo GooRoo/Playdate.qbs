@@ -1,0 +1,5 @@
+Project {
+	qbsSearchPaths: [
+		'qbs',
+	]
+}
